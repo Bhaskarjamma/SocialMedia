@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{# make sure Bootstrap Icons is loaded in base.html head #}
+
+{% block contents %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      {# ————— Post Card ————— #}
+      <div class="card shadow-sm mb-4">
+
+        {# Delete Post button for owner #}
+        {% if user == post.user %}
+        <div class="card-header bg-white text-end">
+          <form action="{% url 'posts:delete_post' post.pk %}"
+                method="post"
+                onsubmit="return confirm('Delete this post?');"
+                class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i> Delete Post
+            </button>
+          </form>
+        </div>
+        {% endif %}
+
+        {# Post Image #}
+        <img src="{{ post.image.url }}"
+             class="card-img-top"
+             alt="Post image"
+             loading="lazy">
+
+        <div class="card-body">
+
+          {# Username + Time & Likes row #}
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="mb-1">{{ post.user.username }}</h5>
+              <small class="text-muted">
+                {{ post.created_at|date:"M d, Y H:i" }}
+              </small>
+            </div>
+            <form action="{% url 'posts:like_toggle' post.pk %}"
+                  method="post">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-sm {% if user in post.likes.all %}
+                                         btn-danger
+                                       {% else %}
+                                         btn-outline-danger
+                                       {% endif %}">
+                <i class="bi bi-heart-fill"></i>
+                {{ post.total_likes }}
+              </button>
+            </form>
+          </div>
+
+          {# Caption #}
+          <p class="card-text">{{ post.caption }}</p>
+        </div>
+      </div>
+
+      {# ————— Comments Section ————— #}
+      <h4 class="mb-3">Comments ({{ post.comments.count }})</h4>
+
+      <ul class="list-group mb-4">
+        {% for comment in post.comments.all %}
+          <li class="list-group-item d-flex justify-content-between">
+
+            <div>
+              <strong>{{ comment.user.username }}</strong>
+              <p class="mb-1">{{ comment.text }}</p>
+              <small class="text-muted">
+                {{ comment.created_at|timesince }} ago
+              </small>
+            </div>
+
+            {% if user == comment.user %}
+            <form action="{% url 'posts:delete_comment' comment.pk %}"
+                  method="post">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+            {% endif %}
+
+          </li>
+        {% empty %}
+          <li class="list-group-item text-center">No comments yet!</li>
+        {% endfor %}
+      </ul>
+
+      {# ————— Add Comment Form ————— #}
+      {% if user.is_authenticated %}
+        <div class="card shadow-sm mb-5">
+          <div class="card-body">
+            <form action="{% url 'posts:add_comment' post.pk %}"
+                  method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <textarea name="text"
+                          class="form-control"
+                          rows="3"
+                          placeholder="Add a comment..."
+                          required>{{ comment_text }}</textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-chat-left-text"></i> Comment
+              </button>
+            </form>
+          </div>
+        </div>
+      {% else %}
+        <p>
+          <a href="{% url 'accounts:login' %}">Log in</a> to post a comment.
+        </p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

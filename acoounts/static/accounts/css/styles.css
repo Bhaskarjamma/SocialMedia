@@ -1,0 +1,24 @@
+ .bg-home {
+     background: linear-gradient(to right, #0072ff, #00c6ff);
+     height: 100vh;
+     background-size: cover;
+     background-repeat: no-repeat;
+ }
+
+ h1,
+ p {
+     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+ }
+ /* styles.css */
+body {
+  background-color: #f8f9fa;  /* light grey behind the card */
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.form-group input {
+  height: 2.5rem;
+}

@@ -1,0 +1,52 @@
+/* wrap just the image + overlay */
+.image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* nice zoom on hover */
+.image-wrapper .post-img {
+  display: block;
+  width: 100%;
+  transition: transform .5s ease;
+}
+.post-card:hover .post-img {
+  transform: scale(1.05);
+}
+
+/* overlay sits at bottom of image only */
+.image-wrapper .post-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: .5rem 1rem;
+  background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent);
+  z-index: 2;
+  color: #fff;
+}
+
+/* ensure body & footer contents sit above everything */
+.post-card .card-body,
+.post-card .card-footer {
+  position: relative;
+  z-index: 3;
+}
+
+/* lift effect on card hover */
+.post-card {
+  border: none;
+  border-radius: .75rem;
+  transition: transform .3s, box-shadow .3s;
+}
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+/* slim icon-only button */
+.btn-icon-only {
+  background: none;
+  border: none;
+  padding: 0;
+}
