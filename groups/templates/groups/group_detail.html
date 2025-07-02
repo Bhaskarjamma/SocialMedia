@@ -2,7 +2,13 @@
 {% block contents %}
   <h2>Group: {{ group.name }}</h2>
   <p>{{ group.description }}</p>
-
+  {%if messages %} 
+        <ul class="messages">
+            {%for msg in messages%}
+                <li class="{{msg.tags}}">{{     msg }}</li>
+            {%endfor%}
+        </ul>
+    {%endif%}
   {% if is_member %}
     <form method="post" action="{% url 'groups:leave_group' group.pk %}">
       {% csrf_token %}
@@ -14,6 +20,7 @@
       <button>Join Group</button>
     </form>
   {% endif %}
+ 
 
   <hr>
   <h3>Posts</h3>
@@ -25,5 +32,5 @@
   {% empty %}
     <p>No posts yet in this group.</p>
   {% endfor %}
-  <p><a href="{% url 'groups:group_list' %}">← Back to All Groups</a></p>
+  <p><a href="{% url 'groups:user_groups' %}">← Back to All Groups</a></p>
 {% endblock %}

@@ -6,6 +6,8 @@ from django.shortcuts import redirect
 from posts.models import Post
 from .forms import GroupForm
 from django.urls import reverse_lazy
+from django.views import View
+from django.contrib import messages as message
 
 # Create your views here.
 class UserGroupsListView(LoginRequiredMixin, ListView):
@@ -28,6 +30,7 @@ class GroupDetailView(LoginRequiredMixin, DetailView):
         return super().dispatch(request, *args, **kwargs)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['is_member'] = (self.object.members.filter(pk=self.request.user.pk).exists())
         context['posts'] = (
             Post.objects.filter(group=self.object).order_by('-created_at') 
         )
@@ -63,8 +66,19 @@ class GroupListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['available'] = self.get_queryset()
         return context
-class GroupJoinView(LoginRequiredMixin, CreateView):
-    def get(self, request, group_id,*args, **kwargs):
+class GroupJoinView(LoginRequiredMixin, View):
+    def post(self, request, group_id,*args, **kwargs):
         group = get_object_or_404(Group, id=group_id)
-        group.membsers.add(request.user)
+        group.members.add(request.user)
+        message.success(request, f"You have joined the group {group.name}.")
         return redirect('groups:group_detail', pk=group.pk)
+
+class GroupLeaveView(LoginRequiredMixin, View):
+    def post(self, request, group_id, *args, **kwargs):
+        group = get_object_or_404(Group, id=group_id)
+        if request.user in group.members.all():
+            group.members.remove(request.user)
+            message.success(request, f"You have left the group {group.name}.")
+        else:
+            message.error(request, "You are not a member of this group.")
+        return redirect('groups:user_groups')
