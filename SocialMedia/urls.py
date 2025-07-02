@@ -27,9 +27,10 @@ urlpatterns = [
    
     path('admin/', admin.site.urls),
    
-    path('app/',IndexView.as_view(), name='index'),
+    path('',IndexView.as_view(), name='index'),
     path('app/',include('acoounts.urls', namespace='accounts')),
     path('app/post/',include('posts.urls', namespace='posts')),
+    path('app/group/',include('groups.urls', namespace='groups')),
    
    
 ]

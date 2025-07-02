@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block contents %}
+  <h2>Group: {{ group.name }}</h2>
+  <p>{{ group.description }}</p>
+
+  {% if is_member %}
+    <form method="post" action="{% url 'groups:leave_group' group.pk %}">
+      {% csrf_token %}
+      <button>Leave Group</button>
+    </form>
+  {% else %}
+    <form method="post" action="{% url 'groups:join_group' group.pk %}">
+      {% csrf_token %}
+      <button>Join Group</button>
+    </form>
+  {% endif %}
+
+  <hr>
+  <h3>Posts</h3>
+  {% for post in posts %}
+    <div>
+      <strong>{{ post.author.username }}</strong> at {{ post.created_at }}:
+      <p>{{ post.content }}</p>
+    </div><hr>
+  {% empty %}
+    <p>No posts yet in this group.</p>
+  {% endfor %}
+  <p><a href="{% url 'groups:group_list' %}">← Back to All Groups</a></p>
+{% endblock %}

@@ -16,7 +16,10 @@ class SignUpView(CreateView):
         return redirect(self.success_url)
 
 class IndexView(TemplateView):
-    template_name = 'index.html'
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('/app/home/')
+        return render(request, 'index.html')
 class HomeView(TemplateView):
     template_name = 'accounts/home.html'
 

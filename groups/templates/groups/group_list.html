@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block contents %}
+  <h2>All Groups</h2>
+  <p><a href="{% url 'groups:create_group' %}">➕ Create new group</a></p>
+  <ul>
+    {% for g in groups %}
+      <li>
+        <a href="{% url 'groups:group_detail' g.pk %}">{{ g.name }}</a>
+        {% if g.pk in user_memberships %}
+          <form method="post" action="{% url 'groups:leave_group' g.pk %}" style="display:inline">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'groups:group_list' %}">
+            <button>Leave</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'groups:join_group' g.pk %}" style="display:inline">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'groups:group_list' %}">
+            <button>Join</button>
+          </form>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>No groups exist yet. <a href="{% url 'groups:create_group' %}">Create one →</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
